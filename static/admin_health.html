@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Health Hackathon</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .header h1 {
+        color: #667eea;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1em;
+      }
+
+      .auth-container {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+        margin: 100px auto;
+      }
+
+      .auth-container h2 {
+        color: #667eea;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1em;
+        transition: all 0.3s;
+      }
+
+      .input-group input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-danger {
+        background: #ff4757;
+        color: white;
+      }
+
+      .btn-success {
+        background: #10ac84;
+        color: white;
+      }
+
+      .dashboard {
+        display: none;
+      }
+
+      .dashboard.active {
+        display: block;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card h3 {
+        color: #667eea;
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
+
+      .stat-card p {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      .upload-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .upload-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .drop-zone {
+        border: 3px dashed #667eea;
+        border-radius: 15px;
+        padding: 60px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 20px;
+      }
+
+      .drop-zone:hover {
+        background: #f8f9ff;
+        border-color: #764ba2;
+      }
+
+      .drop-zone.dragging {
+        background: #f0f0ff;
+      }
+
+      .drop-zone i {
+        font-size: 3em;
+        color: #667eea;
+        margin-bottom: 15px;
+      }
+
+      .documents-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .documents-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .document-list {
+        list-style: none;
+      }
+
+      .document-item {
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s;
+      }
+
+      .document-item:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .document-info h4 {
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .document-info p {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .notification.success {
+        background: #10ac84;
+      }
+
+      .notification.error {
+        background: #ff4757;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      #file-input {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+      <div class="auth-container">
+        <h2><i class="fas fa-user-shield"></i> Admin Authentication</h2>
+        <div class="input-group">
+          <label>Admin Token</label>
+          <input
+            type="password"
+            id="admin-token"
+            placeholder="Enter admin token"
+          />
+        </div>
+        <button class="btn btn-primary" onclick="authenticate()">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+      <div class="container">
+        <div class="header">
+          <h1><i class="fas fa-heartbeat"></i> Health Hackathon Admin</h1>
+          <p>Document Management & System Control</p>
+          <button
+            class="btn btn-danger"
+            onclick="logout()"
+            style="width: auto; margin-top: 15px"
+          >
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3 id="stat-documents">-</h3>
+            <p><i class="fas fa-file-pdf"></i> Documents Uploaded</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="stat-chunks">-</h3>
+            <p><i class="fas fa-database"></i> Total Chunks</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="stat-ollama">-</h3>
+            <p><i class="fas fa-robot"></i> Ollama Status</p>
+          </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+          <h2>
+            <i class="fas fa-cloud-upload-alt"></i> Upload Medical Documents
+          </h2>
+          <div
+            class="drop-zone"
+            id="drop-zone"
+            onclick="document.getElementById('file-input').click()"
+          >
+            <i class="fas fa-file-pdf"></i>
+            <h3>Drop PDF here or click to browse</h3>
+            <p>Maximum file size: 50MB</p>
+          </div>
+          <input
+            type="file"
+            id="file-input"
+            accept=".pdf"
+            onchange="handleFileSelect(event)"
+          />
+        </div>
+
+        <!-- Documents List -->
+        <div class="documents-section">
+          <h2><i class="fas fa-folder-open"></i> Uploaded Documents</h2>
+          <ul class="document-list" id="document-list">
+            <li style="text-align: center; color: #999; padding: 40px">
+              No documents uploaded yet
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let isAuthenticated = false;
+
+      // Authentication
+      function authenticate() {
+        const token = document.getElementById("admin-token").value;
+
+        fetch("/admin/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: token }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              isAuthenticated = true;
+              document.getElementById("auth-screen").classList.add("hidden");
+              document.getElementById("dashboard").classList.add("active");
+              loadStats();
+              loadDocuments();
+              showNotification("Logged in successfully", "success");
+            } else {
+              showNotification("Invalid token", "error");
+            }
+          })
+          .catch((err) => {
+            showNotification("Authentication error", "error");
+          });
+      }
+
+      // Logout
+      function logout() {
+        fetch("/admin/logout", { method: "POST" }).then(() => {
+          location.reload();
+        });
+      }
+
+      // Load Stats
+      function loadStats() {
+        fetch("/admin/stats")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              document.getElementById("stat-documents").textContent =
+                data.stats.total_documents;
+              document.getElementById("stat-chunks").textContent =
+                data.stats.total_chunks;
+              document.getElementById("stat-ollama").textContent =
+                data.stats.ollama_status;
+            }
+          });
+      }
+
+      // Load Documents
+      function loadDocuments() {
+        fetch("/admin/documents")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              const list = document.getElementById("document-list");
+              list.innerHTML = "";
+
+              if (data.documents.length === 0) {
+                list.innerHTML =
+                  '<li style="text-align: center; color: #999; padding: 40px;">No documents uploaded yet</li>';
+              } else {
+                data.documents.forEach((doc) => {
+                  const li = document.createElement("li");
+                  li.className = "document-item";
+                  li.innerHTML = `
+                                <div class="document-info">
+                                    <h4><i class="fas fa-file-pdf"></i> ${doc.filename}</h4>
+                                    <p>${doc.size_mb} MB • ${doc.chunks} chunks</p>
+                                </div>
+                                <button class="btn btn-danger" onclick="deleteDocument('${doc.filename}')" style="width: auto;">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            `;
+                  list.appendChild(li);
+                });
+              }
+            }
+          });
+      }
+
+      // File Upload
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+          uploadFile(file);
+        }
+      }
+
+      function uploadFile(file) {
+        if (!file.name.endsWith(".pdf")) {
+          showNotification("Only PDF files are allowed", "error");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        showNotification("Uploading and processing...", "success");
+
+        fetch("/admin/upload", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              showNotification(
+                `${data.message}. Added ${data.chunks_added} chunks.`,
+                "success",
+              );
+              loadStats();
+              loadDocuments();
+            } else {
+              showNotification(data.message || "Upload failed", "error");
+            }
+          })
+          .catch((err) => {
+            showNotification("Upload failed", "error");
+          });
+
+        // Reset input
+        document.getElementById("file-input").value = "";
+      }
+
+      // Delete Document
+      function deleteDocument(filename) {
+        if (!confirm(`Delete ${filename}?`)) return;
+
+        fetch(`/admin/delete/${filename}`, { method: "DELETE" })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              showNotification(data.message, "success");
+              loadStats();
+              loadDocuments();
+            } else {
+              showNotification(data.message || "Delete failed", "error");
+            }
+          });
+      }
+
+      // Drag and Drop
+      const dropZone = document.getElementById("drop-zone");
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragging");
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragging");
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragging");
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          uploadFile(file);
+        }
+      });
+
+      // Notification
+      function showNotification(message, type) {
+        const notification = document.createElement("div");
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>
